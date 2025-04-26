@@ -11,6 +11,7 @@ import data and call get_data() to get the availability data.
 spaces_name and counter are the two variables returned by get_data().
 spaces_name is a list of tuples containing room name and capacity.
 counter is a dictionary with room id as key and number of available slots as value.
+check date will be today if the current time is before 18:00, otherwise it will be tomorrow.
 """
 
 LIDS = [(6539, "Langson Library"), (6579, "Gateway Study Center"), (6580, "Science Library"), (6581, "Multimedia Resources Center"), (12189, "Grunigen Medical Library")]
@@ -42,8 +43,8 @@ def get_data():
             "seat": False,
             "seatId": 0,
             "zone": 0,
-            "start": datetime.now().date().isoformat(),
-            "end": (datetime.now() + timedelta(days = 1)).date().isoformat(),
+            "start": datetime.now().date().isoformat() if datetime.now().hour < 18 else (datetime.now() + timedelta(days = 1)).date().isoformat(),
+            "end": (datetime.now() + timedelta(days = 1)).date().isoformat() if datetime.now().hour < 18 else (datetime.now() + timedelta(days = 2)).date().isoformat(),
             "pageIndex": 0,
             "pageSize": 18
         }
@@ -86,11 +87,10 @@ def log_data(names, counter_dict):
 
     with open(csv_path, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
-        time = None
         if datetime.now().hour < 12:
-            time = f"{now.month}/{now.day}: FIRST_HALF"
+            time = f"{now.month}/{now.day}: MORNING"
         else:
-            time = f"{now.month}/{now.day}: LAST_HALF"
+            time = f"{now.month}/{now.day}: NEXT DAY"
         writer.writerow([total_available, time])
 
 if __name__ == '__main__':
