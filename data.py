@@ -1,7 +1,9 @@
 from datetime import datetime, timedelta
+from pathlib import Path
 import requests
 import re
 import json
+import csv
 
 """
 This script checks the availability of library spaces.
@@ -70,7 +72,28 @@ def print_availability_report(names, counter_dict):
     print("===========END OF REPORT===========")
     print()
 
+def log_data(names, counter_dict):
+    now = datetime.now()
+    csv_path = Path("data_pt.csv")
+    if not csv_path.exists():
+        with open(csv_path, 'w', newline='') as csvfile:
+            writer = csv.writer(csvfile)
+            writer.writerow(["Availability", "Time"])
+
+    total_available = 0
+    for name in names:
+        total_available += counter_dict[name[0]]
+
+    with open(csv_path, 'a', newline='') as csvfile:
+        writer = csv.writer(csvfile)
+        time = None
+        if datetime.now().hour < 12:
+            time = f"{now.month}/{now.day}: FIRST_HALF"
+        else:
+            time = f"{now.month}/{now.day}: LAST_HALF"
+        writer.writerow([total_available, time])
 
 if __name__ == '__main__':
     spaces_names, slot_counter = get_data()
     print_availability_report(spaces_names, slot_counter)
+    log_data(spaces_names, slot_counter)
