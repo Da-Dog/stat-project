@@ -43,8 +43,8 @@ def get_data():
             "seat": False,
             "seatId": 0,
             "zone": 0,
-            "start": datetime.now().date().isoformat() if datetime.now().hour < 18 else (datetime.now() + timedelta(days = 1)).date().isoformat(),
-            "end": (datetime.now() + timedelta(days = 1)).date().isoformat() if datetime.now().hour < 18 else (datetime.now() + timedelta(days = 2)).date().isoformat(),
+            "start": datetime.now().date().isoformat() if datetime.now().hour < 12 else (datetime.now() + timedelta(days = 1)).date().isoformat(),
+            "end": (datetime.now() + timedelta(days = 1)).date().isoformat() if datetime.now().hour < 12 else (datetime.now() + timedelta(days = 2)).date().isoformat(),
             "pageIndex": 0,
             "pageSize": 18
         }
@@ -88,9 +88,9 @@ def log_data(names, counter_dict):
     with open(csv_path, 'a', newline='') as csvfile:
         writer = csv.writer(csvfile)
         if datetime.now().hour < 12:
-            time = f"{now.month}/{now.day}: MORNING"
+            time = f"{now.month}/{now.day}: TODAY: {now.hour} AM"
         else:
-            time = f"{now.month}/{now.day}: NEXT DAY"
+            time = f"{now.month}/{now.day}: NEXT DAY: {now.hour - 12} PM"
         writer.writerow([total_available, time])
 
 if __name__ == '__main__':
